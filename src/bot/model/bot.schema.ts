@@ -11,23 +11,17 @@ export class Bot {
   @Prop()
   firstName: string;
 
-  @Prop({ default: 0 })
-  score: number;
-
-  @Prop({ default: 0 })
-  testScore: number; 
-
-  @Prop({ default: 0 })
-  testStep: number; 
-
-  @Prop({ default: false })
-  isTesting: boolean; 
-  
   @Prop({ type: String, default: null })
-  currentQuestion: string | null;
+  phoneNumber: string | null;
 
-  @Prop({ type: Number, default: null })
-  currentAnswer: number | null;
+  @Prop({ type: String, default: null })
+  location: string | null;
+
+  @Prop({ type: Array, default: [] })
+  orders: any[];
+
+  @Prop({ type: String, default: null })
+  currentCart: string | null;
 }
 
 

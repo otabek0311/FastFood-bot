@@ -1,29 +1,105 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🍔 Fast Food Yetkazib Berish Boti
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Mini fast food yetkazib berish Telegram boti. NestJS va MongoDB bilan yozilgan.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Xususiyatlar
 
-## Description
+- **Telefon raqam so'rash** - Foydalanuvchining telefon raqamini olish
+- **Location so'rash** - Yetkazib berish manzilini olish
+- **Kategoriyalar** - 3 ta asosiy kategoriya:
+  - 🥤 Ichimliklar (Coca-Cola, Fanta, Qahva va boshqalar)
+  - 🍕 Yeguliklar (Burger, Pizza, Shawarma, Osh)
+  - 🍰 Shirinliklar (Tort, Keks, Donuts)
+  
+- **Mahsulot Tafsilotlari** - Har bir mahsulot uchun:
+  - Nomi
+  - Narxi
+  - Rasmi
+  - Tarkibi (tavsifi)
+  - "Buyurtma berish" tugmasi
+  
+- **Savat** - Bir nechta mahsulotni tanlash va buyurtma berish
+- **Buyurtma Tasdiqlash** - Jami narx, telefon, manzil bilan tasdiqlovchi xabar
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## O'rnatish va Ishga Tushirish
+
+### O'rnatish
+
+```bash
+npm install
+```
+
+### Environment o'zgaruvchilari
+
+`.env` faylini yarating va quyidagi ma'lumotlarni qo'shing:
+
+```bash
+BOT_TOKEN=your_telegram_bot_token
+MONGO_URI=mongodb://localhost:27017/fastfood
+PORT=3000
+```
+
+### Ishga Tushirish
+
+```bash
+# Development rejimida
+npm run start:dev
+
+# Production rejimida
+npm run start:prod
+```
+
+## Bot Komandalar
+
+- `/start` - Botni ishga tushirish va buyurtma jarayonini boshlash
+- Telefon raqam - Foydalanuvchining telefon raqamini kiritish
+- Location - Yetkazib berish manzilini kiritish
+- Kategoriya tanlash - Ichimliklar, Yeguliklar yoki Shirinliklar
+- Mahsulot tanlash - Tafsilotlarni ko'rish
+- Miqdor kiritish - Mahsulot miqdorini belgilash
+- Buyurtma tasdiqlash - Buyurtmani yakuniy tasdiqlash
+
+## Database Schema
+
+```typescript
+Bot {
+  chatId: string;
+  firstName: string;
+  phoneNumber?: string;
+  location?: string;
+  orders: any[];
+  currentCart?: string;
+}
+```
+
+## Texnologiyalar
+
+- **NestJS** - Backend framework
+- **TypeScript** - Dasturlash tili
+- **MongoDB** - Database
+- **Mongoose** - ODM
+- **Telegram Bot API** - Bot integratsiyasi
+
+## Mahsulotlar
+
+Bot-da oldindan 11 ta mahsulot mavjud:
+
+**Ichimliklar:**
+- Coca-Cola (5000 so'm)
+- Fanta (4500 so'm)
+- Sprite (4500 so'm)
+- Qahva (6000 so'm)
+
+**Yeguliklar:**
+- Burger (15000 so'm)
+- Pizza (25000 so'm)
+- Shawarma (12000 so'm)
+- Osh (8000 so'm)
+
+**Shirinliklar:**
+- Tort (20000 so'm)
+- Keks (5000 so'm)
+- Donuts (8000 so'm)
 
 ## Project setup
 

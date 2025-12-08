@@ -4,16 +4,47 @@ import { Model } from 'mongoose';
 import { Bot, BotDocument } from './model/bot.schema';
 import TelegramBot from "node-telegram-bot-api";
 
-interface MathQuestion {
-  question: string;
-  answer: number;
-  id: number;
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  category: string;
+}
+
+interface UserSession {
+  chatId: string;
+  firstName: string;
+  step: string;
+  phoneNumber?: string;
+  location?: string;
+  cart: any[];
 }
 
 @Injectable()
 export class BotService {
   bot: TelegramBot;
-  private userSessions: Map<string, any> = new Map();
+  private userSessions: Map<string, UserSession> = new Map();
+  
+  private products: Product[] = [
+    // Ichimliklar
+    { id: '1', name: 'Coca-Cola', price: 5000, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/coca-cola-logo.jpg', description: 'Gazli ichimlik', category: 'ichimliklar' },
+    { id: '2', name: 'Fanta', price: 4500, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/fanta-logo.jpg', description: 'Apelsin ta\'ami', category: 'ichimliklar' },
+    { id: '3', name: 'Sprite', price: 4500, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/sprite-logo.jpg', description: 'Limon ta\'ami', category: 'ichimliklar' },
+    { id: '4', name: 'Qahva', price: 6000, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Edam_cheese.jpg/1200px-Edam_cheese.jpg', description: 'Issiq qahva', category: 'ichimliklar' },
+    
+    // Yeguliklar
+    { id: '5', name: 'Burger', price: 15000, image: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/ReceiptSwiss.jpg', description: 'Mol go\'shti, pomidor, salat', category: 'yeguliklar' },
+    { id: '6', name: 'Pizza', price: 25000, image: 'https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg', description: 'Peynir, pomidor, kolbasa', category: 'yeguliklar' },
+    { id: '7', name: 'Shawarma', price: 12000, image: 'https://upload.wikimedia.org/wikipedia/commons/1/16/Chicken_shawarma.jpg', description: 'Tovuq go\'shti, sabzavot', category: 'yeguliklar' },
+    { id: '8', name: 'Osh', price: 8000, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/1200px-Good_Food_Display_-_NCI_Visuals_Online.jpg', description: 'Osh, sabzavot, go\'sht', category: 'yeguliklar' },
+    
+    // Shirinliklar
+    { id: '9', name: 'Tort', price: 20000, image: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Recipe_logo.jpeg', description: 'Shokolad torti', category: 'shirinliklar' },
+    { id: '10', name: 'Keks', price: 5000, image: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Chocolate-Chip-Cookies-Recipe.jpg', description: 'Vanilya keksi', category: 'shirinliklar' },
+    { id: '11', name: 'Donuts', price: 8000, image: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Fresh_made_donuts.jpg', description: 'Shokolad donuts', category: 'shirinliklar' },
+  ];
 
   constructor(@InjectModel(Bot.name) private botModel: Model<BotDocument>) {
     if (!process.env.BOT_TOKEN) {
@@ -26,150 +57,269 @@ export class BotService {
   private setupBotHandlers() {
     // /start buyrug'i
     this.bot.onText(/\/start/, async (msg) => {
-      const chatId = msg.chat.id;
+      const chatId = msg.chat.id.toString();
       const firstName = msg.from?.first_name || 'Foydalanuvchi';
       
-      await this.bot.sendMessage(
-        chatId,
-        'Matematik Quiz Botiga xush kelibsiz! 🎓\n\n/start_quiz - Quizni boshlash',
-      );
-      
       // Foydalanuvchini bazaga saqlash
-      const existingUser = await this.findOne(chatId.toString());
+      const existingUser = await this.findOne(chatId);
       if (!existingUser) {
-        await this.create(chatId.toString(), firstName);
+        await this.create(chatId, firstName);
       }
-    });
 
-    // /start_quiz buyrug'i
-    this.bot.onText(/\/start_quiz/, async (msg) => {
-      const chatId = msg.chat.id;
-      const questions = this.generateQuestions(10);
-      
-      this.userSessions.set(chatId.toString(), {
-        chatId: chatId.toString(),
-        questions,
-        currentIndex: 0,
-        correctAnswers: 0,
-        totalAnswered: 0,
+      // Session yaratish
+      this.userSessions.set(chatId, {
+        chatId,
+        firstName,
+        step: 'phone',
+        cart: [],
       });
 
-      const firstQuestion = questions[0];
       await this.bot.sendMessage(
         chatId,
-        `Savol 1/10:\n\n${firstQuestion.question}\n\nJavobni raqam sifatida yuboring.`,
+        '🍔 Fast Food Botiga xush kelibsiz!\n\nIltimos, telefon raqamingizni yuboring:',
       );
     });
 
-    // Raqam javoblarini qabul qilish
+    // Telefon raqam qabul qilish
     this.bot.on('message', async (msg) => {
       const chatId = msg.chat.id.toString();
       const userSession = this.userSessions.get(chatId);
+
+      if (!userSession) {
+        return;
+      }
 
       // Agar buyruq bo'lsa, o'tkazib yubor
       if (msg.text?.startsWith('/')) {
         return;
       }
 
+      if (userSession.step === 'phone') {
+        userSession.phoneNumber = msg.text;
+        userSession.step = 'location';
+        
+        await this.bot.sendMessage(
+          chatId,
+          '📍 Iltimos, joylashuvingizni yuboring:',
+        );
+      } else if (userSession.step === 'location') {
+        userSession.location = msg.text;
+        userSession.step = 'category';
+
+        // Foydalanuvchini yangilash
+        await this.update(chatId, {
+          phoneNumber: userSession.phoneNumber,
+          location: userSession.location,
+        });
+
+        // Kategoriya tanlash
+        await this.sendCategoryMenu(chatId);
+      } else if (userSession.step === 'product_quantity') {
+        const quantity = parseInt(msg.text || '0', 10);
+        if (isNaN(quantity) || quantity <= 0) {
+          await this.bot.sendMessage(chatId, 'Iltimos, to\'g\'ri miqdorni kiriting!');
+          return;
+        }
+
+        const lastProduct = userSession.cart[userSession.cart.length - 1];
+        lastProduct.quantity = quantity;
+        lastProduct.total = lastProduct.price * quantity;
+
+        userSession.step = 'category';
+        
+        const keyboard = {
+          inline_keyboard: [
+            [{ text: '➕ Yana mahsulot qo\'shish', callback_data: 'back_to_category' }],
+            [{ text: '✅ Buyurtmani tasdiqlash', callback_data: 'confirm_order' }],
+          ],
+        };
+
+        await this.bot.sendMessage(
+          chatId,
+          `✅ "${lastProduct.name}" ${quantity} ta qo'shildi!\n\nNarxi: ${lastProduct.total.toLocaleString()} so'm`,
+          { reply_markup: keyboard },
+        );
+      }
+    });
+
+    // Callback query (tugmalar)
+    this.bot.on('callback_query', async (query) => {
+      if (!query.message) {
+        return;
+      }
+      
+      const chatId = query.message.chat.id.toString();
+      const userSession = this.userSessions.get(chatId);
+
       if (!userSession) {
         return;
       }
 
-      const answer = parseInt(msg.text || '0', 10);
-      if (isNaN(answer)) {
-        await this.bot.sendMessage(chatId, 'Iltimos, raqam yuboring!');
+      const data = query.data;
+
+      if (!data) {
         return;
       }
 
-      const currentQuestion = userSession.questions[userSession.currentIndex];
-      const isCorrect = currentQuestion.answer === answer;
-
-      if (isCorrect) {
-        userSession.correctAnswers++;
-        await this.bot.sendMessage(chatId, '✅ To\'g\'ri javob!');
-      } else {
-        await this.bot.sendMessage(
-          chatId,
-          `❌ Noto\'g\'ri javob. To\'g\'ri javob: ${currentQuestion.answer}`,
-        );
-      }
-
-      userSession.currentIndex++;
-      userSession.totalAnswered++;
-
-      if (userSession.totalAnswered === userSession.questions.length) {
-        // Quiz tugadi
-        const percentage = Math.round(
-          (userSession.correctAnswers / userSession.questions.length) * 100,
-        );
+      if (data === 'back_to_category') {
+        await this.sendCategoryMenu(chatId);
+      } else if (data.startsWith('category_')) {
+        const category = data.replace('category_', '');
+        await this.sendProductsByCategory(chatId, category);
+      } else if (data.startsWith('product_')) {
+        const productId = data.replace('product_', '');
+        await this.sendProductDetails(chatId, productId);
+      } else if (data.startsWith('add_to_cart_')) {
+        const productId = data.replace('add_to_cart_', '');
+        const product = this.products.find(p => p.id === productId);
         
-        await this.bot.sendMessage(
-          chatId,
-          `🎉 Quiz tugadi!\n\nNatija: ${userSession.correctAnswers}/${userSession.questions.length} (${percentage}%)\n\n/start_quiz - Yana quizni boshlash`,
-        );
-
-        // Natijani bazaga saqlash
-        await this.update(chatId, {
-          testScore: userSession.correctAnswers,
-          isTesting: false,
-        });
-
-        this.userSessions.delete(chatId);
-      } else {
-        // Keyingi savol
-        const nextQuestion = userSession.questions[userSession.currentIndex];
-        const questionNumber = userSession.currentIndex + 1;
-        await this.bot.sendMessage(
-          chatId,
-          `Savol ${questionNumber}/10:\n\n${nextQuestion.question}`,
-        );
+        if (product) {
+          userSession.cart.push({ ...product, quantity: 0 });
+          userSession.step = 'product_quantity';
+          
+          await this.bot.sendMessage(
+            chatId,
+            `"${product.name}" uchun miqdorni kiriting:`,
+          );
+        }
+      } else if (data === 'confirm_order') {
+        await this.confirmOrder(chatId);
+      } else if (data === 'final_confirm') {
+        const userSession = this.userSessions.get(chatId);
+        if (userSession) {
+          await this.bot.sendMessage(
+            chatId,
+            '✅ Buyurtma qabul qilindi!\n\n🚗 Tez orada yetkazib beriladi.\n\n/start - Yangi buyurtma berish',
+          );
+          userSession.cart = [];
+          userSession.step = 'category';
+        }
+      } else if (data === 'cancel_order') {
+        const userSession = this.userSessions.get(chatId);
+        if (userSession) {
+          await this.bot.sendMessage(
+            chatId,
+            '❌ Buyurtma bekor qilindi.\n\n/start - Yangi buyurtma berish',
+          );
+          userSession.cart = [];
+          userSession.step = 'category';
+        }
       }
+
+      await this.bot.answerCallbackQuery(query.id);
     });
   }
 
-  generateQuestions(count: number): MathQuestion[] {
-    const questions: MathQuestion[] = [];
+  private async sendCategoryMenu(chatId: string) {
+    const keyboard = {
+      inline_keyboard: [
+        [{ text: '🥤 Ichimliklar', callback_data: 'category_ichimliklar' }],
+        [{ text: '� Yeguliklar', callback_data: 'category_yeguliklar' }],
+        [{ text: '🍰 Shirinliklar', callback_data: 'category_shirinliklar' }],
+      ],
+    };
 
-    for (let i = 0; i < count; i++) {
-      const num1 = Math.floor(Math.random() * 100) + 1;
-      const num2 = Math.floor(Math.random() * 100) + 1;
-      const operationType = Math.floor(Math.random() * 4);
+    await this.bot.sendMessage(
+      chatId,
+      '📋 Kategoriyani tanlang:',
+      { reply_markup: keyboard },
+    );
+  }
 
-      let question: string;
-      let answer: number;
+  private async sendProductsByCategory(chatId: string, category: string) {
+    const products = this.products.filter(p => p.category === category);
+    
+    const keyboard = {
+      inline_keyboard: products.map(product => [
+        { text: `${product.name} - ${product.price.toLocaleString()} so'm`, callback_data: `product_${product.id}` },
+      ]),
+    };
 
-      switch (operationType) {
-        case 0: // Qo'shish
-          question = `${num1} + ${num2} = ?`;
-          answer = num1 + num2;
-          break;
-        case 1: // Ayirish
-          question = `${num1} - ${num2} = ?`;
-          answer = num1 - num2;
-          break;
-        case 2: // Ko'paytirish
-          question = `${num1} * ${num2} = ?`;
-          answer = num1 * num2;
-          break;
-        case 3: // Bo'lish (butun sonlar)
-          const divisor = Math.floor(Math.random() * 10) + 1;
-          const dividend = divisor * (Math.floor(Math.random() * 10) + 1);
-          question = `${dividend} / ${divisor} = ?`;
-          answer = dividend / divisor;
-          break;
-        default:
-          question = `${num1} + ${num2} = ?`;
-          answer = num1 + num2;
-      }
+    const categoryNames = {
+      ichimliklar: '🥤 Ichimliklar',
+      yeguliklar: '🍕 Yeguliklar',
+      shirinliklar: '🍰 Shirinliklar',
+    };
 
-      questions.push({
-        question,
-        answer,
-        id: i + 1,
-      });
+    keyboard.inline_keyboard.push([
+      { text: '⬅️ Orqaga', callback_data: 'back_to_category' },
+    ]);
+
+    await this.bot.sendMessage(
+      chatId,
+      `${categoryNames[category] || category} ro'yxati:`,
+      { reply_markup: keyboard },
+    );
+  }
+
+  private async sendProductDetails(chatId: string, productId: string) {
+    const product = this.products.find(p => p.id === productId);
+    
+    if (!product) {
+      await this.bot.sendMessage(chatId, 'Mahsulot topilmadi!');
+      return;
     }
 
-    return questions;
+    const keyboard = {
+      inline_keyboard: [
+        [{ text: '🛒 Buyurtma berish', callback_data: `add_to_cart_${product.id}` }],
+        [{ text: '⬅️ Orqaga', callback_data: `category_${product.category}` }],
+      ],
+    };
+
+    const message = `
+📦 ${product.name}
+💰 Narxi: ${product.price.toLocaleString()} so'm
+📝 Tarkibi: ${product.description}
+    `;
+
+    await this.bot.sendPhoto(
+      chatId,
+      product.image,
+      {
+        caption: message.trim(),
+        reply_markup: keyboard,
+      },
+    );
+  }
+
+  private async confirmOrder(chatId: string) {
+    const userSession = this.userSessions.get(chatId);
+    
+    if (!userSession || userSession.cart.length === 0) {
+      await this.bot.sendMessage(chatId, 'Savat bo\'sh!');
+      return;
+    }
+
+    let orderText = '📦 Sizning buyurtmangiz:\n\n';
+    let totalPrice = 0;
+
+    userSession.cart.forEach((item, index) => {
+      orderText += `${index + 1}. ${item.name} x${item.quantity} = ${item.total.toLocaleString()} so'm\n`;
+      totalPrice += item.total;
+    });
+
+    orderText += `\n💰 Jami: ${totalPrice.toLocaleString()} so'm`;
+    orderText += `\n📞 Telefon: ${userSession.phoneNumber}`;
+    orderText += `\n📍 Manzil: ${userSession.location}`;
+
+    // Buyurtmani bazaga saqlash
+    await this.update(chatId, {
+      orders: userSession.cart,
+    });
+
+    const keyboard = {
+      inline_keyboard: [
+        [{ text: '✅ Tasdiqlash', callback_data: 'final_confirm' }],
+        [{ text: '❌ Bekor qilish', callback_data: 'cancel_order' }],
+      ],
+    };
+
+    await this.bot.sendMessage(
+      chatId,
+      orderText,
+      { reply_markup: keyboard },
+    );
   }
 
   async create(chatId: string, firstName: string) {
