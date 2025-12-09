@@ -29,21 +29,21 @@ export class BotService {
   
   private products: Product[] = [
     // Ichimliklar
-    { id: '1', name: 'Coca-Cola', price: 5000, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/coca-cola-logo.jpg', description: 'Gazli ichimlik', category: 'ichimliklar' },
-    { id: '2', name: 'Fanta', price: 4500, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/fanta-logo.jpg', description: 'Apelsin ta\'ami', category: 'ichimliklar' },
-    { id: '3', name: 'Sprite', price: 4500, image: 'https://www.coca-colacompany.com/content/dam/journey/us/en/private/news/sprite-logo.jpg', description: 'Limon ta\'ami', category: 'ichimliklar' },
-    { id: '4', name: 'Qahva', price: 6000, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Edam_cheese.jpg/1200px-Edam_cheese.jpg', description: 'Issiq qahva', category: 'ichimliklar' },
+    { id: '1', name: 'Coca-Cola', price: 5000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Gazli ichimlik', category: 'ichimliklar' },
+    { id: '2', name: 'Fanta', price: 4500, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Apelsin ta\'ami', category: 'ichimliklar' },
+    { id: '3', name: 'Sprite', price: 4500, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Limon ta\'ami', category: 'ichimliklar' },
+    { id: '4', name: 'Qahva', price: 6000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Issiq qahva', category: 'ichimliklar' },
     
     // Yeguliklar
-    { id: '5', name: 'Burger', price: 15000, image: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/ReceiptSwiss.jpg', description: 'Mol go\'shti, pomidor, salat', category: 'yeguliklar' },
-    { id: '6', name: 'Pizza', price: 25000, image: 'https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg', description: 'Peynir, pomidor, kolbasa', category: 'yeguliklar' },
-    { id: '7', name: 'Shawarma', price: 12000, image: 'https://upload.wikimedia.org/wikipedia/commons/1/16/Chicken_shawarma.jpg', description: 'Tovuq go\'shti, sabzavot', category: 'yeguliklar' },
-    { id: '8', name: 'Osh', price: 8000, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/1200px-Good_Food_Display_-_NCI_Visuals_Online.jpg', description: 'Osh, sabzavot, go\'sht', category: 'yeguliklar' },
+    { id: '5', name: 'Burger', price: 15000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Mol go\'shti, pomidor, salat', category: 'yeguliklar' },
+    { id: '6', name: 'Pizza', price: 25000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Peynir, pomidor, kolbasa', category: 'yeguliklar' },
+    { id: '7', name: 'Shawarma', price: 12000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Tovuq go\'shti, sabzavot', category: 'yeguliklar' },
+    { id: '8', name: 'Osh', price: 8000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Osh, sabzavot, go\'sht', category: 'yeguliklar' },
     
     // Shirinliklar
-    { id: '9', name: 'Tort', price: 20000, image: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Recipe_logo.jpeg', description: 'Shokolad torti', category: 'shirinliklar' },
-    { id: '10', name: 'Keks', price: 5000, image: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Chocolate-Chip-Cookies-Recipe.jpg', description: 'Vanilya keksi', category: 'shirinliklar' },
-    { id: '11', name: 'Donuts', price: 8000, image: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Fresh_made_donuts.jpg', description: 'Shokolad donuts', category: 'shirinliklar' },
+    { id: '9', name: 'Tort', price: 20000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Shokolad torti', category: 'shirinliklar' },
+    { id: '10', name: 'Keks', price: 5000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Vanilya keksi', category: 'shirinliklar' },
+    { id: '11', name: 'Donuts', price: 8000, image: 'https://i.pinimg.com/564x/c9/1e/3d/c91e3d3c3d3c3d3c3d3c3d3c3d3c3d3c.jpg', description: 'Shokolad donuts', category: 'shirinliklar' },
   ];
 
   constructor(@InjectModel(Bot.name) private botModel: Model<BotDocument>) {
@@ -74,9 +74,17 @@ export class BotService {
         cart: [],
       });
 
+      const keyboard = {
+        one_time_keyboard: true,
+        keyboard: [
+          [{ text: '📱 Telefon raqamni yuboring', request_contact: true }],
+        ],
+      };
+
       await this.bot.sendMessage(
         chatId,
         '🍔 Fast Food Botiga xush kelibsiz!\n\nIltimos, telefon raqamingizni yuboring:',
+        { reply_markup: keyboard },
       );
     });
 
@@ -95,15 +103,41 @@ export class BotService {
       }
 
       if (userSession.step === 'phone') {
-        userSession.phoneNumber = msg.text;
+        // Telegram dan yuborilgan telefon raqamni qabul qilish
+        if (msg.contact) {
+          userSession.phoneNumber = msg.contact.phone_number;
+        } else if (msg.text) {
+          userSession.phoneNumber = msg.text;
+        } else {
+          await this.bot.sendMessage(chatId, 'Iltimos, telefon raqamni yuboring!');
+          return;
+        }
+        
         userSession.step = 'location';
+        
+        const locationKeyboard = {
+          one_time_keyboard: true,
+          keyboard: [
+            [{ text: '📍 Joylashuvni yuboring', request_location: true }],
+          ],
+        };
         
         await this.bot.sendMessage(
           chatId,
           '📍 Iltimos, joylashuvingizni yuboring:',
+          { reply_markup: locationKeyboard },
         );
       } else if (userSession.step === 'location') {
-        userSession.location = msg.text;
+        // Telegram dan yuborilgan joylashuvni qabul qilish
+        if (msg.location) {
+          userSession.location = `${msg.location.latitude}, ${msg.location.longitude}`;
+        } else if (msg.text) {
+          userSession.location = msg.text;
+        } else {
+          await this.bot.sendMessage(chatId, 'Iltimos, joylashuvni yuboring!');
+          return;
+        }
+        
         userSession.step = 'category';
 
         // Foydalanuvchini yangilash
@@ -273,13 +307,10 @@ export class BotService {
 📝 Tarkibi: ${product.description}
     `;
 
-    await this.bot.sendPhoto(
+    await this.bot.sendMessage(
       chatId,
-      product.image,
-      {
-        caption: message.trim(),
-        reply_markup: keyboard,
-      },
+      message.trim(),
+      { reply_markup: keyboard },
     );
   }
 
